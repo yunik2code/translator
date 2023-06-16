@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    /* Style for the autocomplete container */
+    .autocomplete {
+      position: relative;
+      display: inline-block;
+    }
+
+    /* Style for the autocomplete input */
+    .autocomplete input {
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    /* Style for the autocomplete suggestion box */
+    .autocomplete .suggestions {
+      position: absolute;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 1;
+    }
+
+    /* Style for the autocomplete suggestion items */
+    .autocomplete .suggestions div {
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    /* Style for the highlighted suggestion item */
+    .autocomplete .suggestions div.highlight {
+      background-color: #ddd;
+    }
+  </style>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+</head>
+<body>
+<form method="post">
+  {% csrf_token %}
+
+
+<div class="container">
+  <div class="mb-3">
+  <label for="exampleFormControlTextarea1" class="form-label">Enter the Text</label>
+  <textarea required class="form-control"  name="text" id="exampleFormControlTextarea1" rows="3">{{text}}</textarea>
+</div>
+
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="container">
+
+  <div class="autocomplete">
+    <label for="searchInput" class="form-label">Select a language</label>
+    <input required type="text" value="{{lang}}" name="lang" class="form-control" placeholder="Search.." oninput="filterOptions()" id="searchInput">
+    <div class="suggestions" id="suggestions"></div>
+  </div>
+
+  <select id="dropdownOptions" style="display: none;">
+    {% for lang in langs %}
+    <option value="{{lang}}">{{lang}}</option>
+    {% endfor %}
+  </select>
+
+  <div class="text-center">
+    <button type="submit" class="btn btn-primary">Translate</button>
+
+  </div>
+  </form>
+<div class="container" style="height:30px;"></div>
+<div></div>
+
+
+{% if not translated_text%}
+{% else %}
+
+<div class="form-floating mb-3">
+
+  <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2Disabled" style="height: 100px"  value="{{translated_text}}" disabled >{{translated_text}}</textarea>
+
+</div>
+
+
+{% endif %}
+
+
+
+  <script>
+    function filterOptions() {
+      var input, filter, options, i;
+      input = document.getElementById("searchInput");
+      filter = input.value.toUpperCase();
+      options = document.getElementById("dropdownOptions").getElementsByTagName("option");
+      var suggestionsContainer = document.getElementById("suggestions");
+
+      // Clear existing suggestions
+      suggestionsContainer.innerHTML = '';
+
+      // Filter options and display matching suggestions
+      for (i = 0; i < options.length; i++) {
+        if (options[i].textContent.toUpperCase().indexOf(filter) > -1) {
+          var suggestion = document.createElement('div');
+          suggestion.textContent = options[i].textContent;
+          suggestion.onclick = function() {
+            input.value = this.textContent;
+            suggestionsContainer.innerHTML = '';
+          };
+          suggestionsContainer.appendChild(suggestion);
+        }
+      }
+    }
+
+    // Close the suggestions if the user clicks outside of it
+    window.addEventListener('click', function(event) {
+      var suggestionsContainer = document.getElementById("suggestions");
+      if (!event.target.closest('.autocomplete')) {
+        suggestionsContainer.innerHTML = '';
+      }
+    });
+  </script>
+
+
+
+</div>
+</body>
+</html>
